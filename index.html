@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เกมท่องจำสูตรเคมี ม.3 (30 สารประกอบน่ารู้)</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      --secondary: #0ea5e9;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", "Sarabun", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      color: var(--primary);
+    }
+
+    header p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--muted);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 12px 16px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+    }
+
+    select, .small-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .small-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .scene {
+      width: 100%;
+      height: 310px;
+      perspective: 1000px;
+      margin-bottom: 18px;
+      cursor: pointer;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+      border: 2px solid #e2e8f0;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-color: var(--primary);
+    }
+
+    .badge {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .hint-text {
+      position: absolute;
+      bottom: 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .main-text {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 10px 0;
+    }
+
+    .sub-group {
+      margin: 8px 0;
+      width: 100%;
+    }
+
+    .label-tag {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: block;
+    }
+
+    .value-text {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+      color: white;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn-nav { background: #64748b; max-width: 110px; }
+    .btn-review { background: var(--warning); }
+    .btn-known { background: var(--success); }
+
+    .progress-wrap {
+      background: #e2e8f0;
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .stats-text {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .quiz-box {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .quiz-question {
+      text-align: center;
+      padding: 20px;
+      background: var(--primary-light);
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-question h2 {
+      margin: 8px 0 0;
+      font-size: 2rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .option-btn {
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      background: #fff;
+      font-size: 1.05rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text);
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .option-btn.correct {
+      background: #d1fae5;
+      border-color: var(--success);
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong {
+      background: #fee2e2;
+      border-color: var(--danger);
+      color: #991b1b;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🧪 เกมท่องจำสูตรเคมี ม.3</h1>
+    <p>ทบทวนสูตรเคมี ชื่อสามัญ และชื่อทางเคมี ครบทั้ง 30 ชนิด</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-flash" onclick="switchMode('flash')">🗂️ โหมดแฟลชการ์ด</button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchMode('quiz')">🎯 โหมดควิซทดสอบ</button>
+  </div>
+
+  <div id="flashcard-section">
+    <div class="controls-bar">
+      <div>
+        <label for="front-type">ด้านหน้าแสดง: </label>
+        <select id="front-type" onchange="renderCard()">
+          <option value="formula">สูตรเคมี</option>
+          <option value="common">ชื่อสามัญ</option>
+          <option value="chemical">ชื่อทางเคมี</option>
+        </select>
+      </div>
+      <div>
+        <button class="small-btn" onclick="shuffleCards()">🔀 สลับการ์ด</button>
+        <button class="small-btn" id="filter-btn" onclick="toggleReviewFilter()">📌 เฉพาะที่ยังไม่แม่น (0)</button>
+        <button class="small-btn" onclick="resetProgress()">🔄 เริ่มใหม่</button>
+      </div>
+    </div>
+
+    <div class="scene" onclick="flipCard()">
+      <div class="card" id="flashcard">
+        <div class="card-face card-front">
+          <span class="badge" id="card-index">ข้อที่ 1 / 30</span>
+          <span class="label-tag" id="front-label">สูตรเคมี</span>
+          <div class="main-text" id="front-content">H<sub>2</sub>O</div>
+          <span class="hint-text">👆 คลิกที่การ์ดเพื่อพลิกดูเฉลย</span>
+        </div>
+        <div class="card-face card-back">
+          <span class="badge">เฉลย</span>
+          <div class="sub-group">
+            <span class="label-tag">สูตรเคมี</span>
+            <div class="value-text" id="back-formula">H<sub>2</sub>O</div>
+          </div>
+          <div class="sub-group">
+            <span class="label-tag">ชื่อสามัญ</span>
+            <div class="value-text" id="back-common">น้ำ</div>
+          </div>
+          <div class="sub-group">
+            <span class="label-tag">ชื่อทางเคมี</span>
+            <div class="value-text" id="back-chemical">ไดไฮโดรเจนมอนอกไซด์</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-nav" onclick="prevCard()">⬅️ ก่อนหน้า</button>
+      <button class="btn btn-review" onclick="markCard(false)">🤔 ยังไม่แม่น</button>
+      <button class="btn btn-known" onclick="markCard(true)">✅ จำได้แล้ว</button>
+      <button class="btn btn-nav" onclick="nextCard()">ถัดไป ➡️</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="stats-text" id="stats-text">จำได้แล้ว 0 / 30 ข้อ</div>
+  </div>
+
+  <div id="quiz-section" class="hidden">
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span id="quiz-score">คะแนน: 0</span>
+        <span id="quiz-streak">🔥 คอมโบ: 0</span>
+      </div>
+      <div class="quiz-question">
+        <span class="label-tag" id="quiz-prompt-label">สารนี้มีชื่อสามัญและชื่อทางเคมีว่าอะไร?</span>
+        <h2 id="quiz-prompt">H<sub>2</sub>O</h2>
+      </div>
+      <div class="options-grid" id="quiz-options"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const compounds = [
+    { id: 1, formula: "H<sub>2</sub>O", common: "น้ำ", chemical: "ไดไฮโดรเจนมอนอกไซด์" },
+    { id: 2, formula: "CO<sub>2</sub>", common: "แก๊สคาร์บอนไดออกไซด์", chemical: "คาร์บอนไดออกไซด์" },
+    { id: 3, formula: "CO", common: "แก๊สคาร์บอนมอนอกไซด์", chemical: "คาร์บอนมอนอกไซด์" },
+    { id: 4, formula: "CH<sub>4</sub>", common: "แก๊สมีเทน", chemical: "มีเทน" },
+    { id: 5, formula: "NH<sub>3</sub>", common: "แก๊สแอมโมเนีย", chemical: "แอมโมเนีย" },
+    { id: 6, formula: "H<sub>2</sub>S", common: "แก๊สไข่เน่า", chemical: "ไฮโดรเจนซัลไฟด์" },
+    { id: 7, formula: "Fe<sub>2</sub>O<sub>3</sub>", common: "สนิมเหล็ก", chemical: "ไอรอน (III) ออกไซด์" },
+    { id: 8, formula: "HCl", common: "กรดเกลือ", chemical: "กรดไฮโดรคลอริก" },
+    { id: 9, formula: "H<sub>2</sub>SO<sub>4</sub>", common: "กรดกำมะถัน", chemical: "กรดซัลฟิวริก" },
+    { id: 10, formula: "HNO<sub>3</sub>", common: "กรดดินประสิว", chemical: "กรดไนตริก" },
+    { id: 11, formula: "CH<sub>3</sub>COOH", common: "กรดน้ำส้มสายชู", chemical: "กรดแอซิติก" },
+    { id: 12, formula: "H<sub>2</sub>CO<sub>3</sub>", common: "กรดโซดา", chemical: "กรดคาร์บอนิก" },
+    { id: 13, formula: "NaOH", common: "โซดาไฟ", chemical: "โซเดียมไฮดรอกไซด์" },
+    { id: 14, formula: "KMnO<sub>4</sub>", common: "ด่างทับทิม", chemical: "โพแทสเซียมเปอร์แมงกาเนต" },
+    { id: 15, formula: "Ca(OH)<sub>2</sub>", common: "น้ำปูนใส", chemical: "แคลเซียมไฮดรอกไซด์" },
+    { id: 16, formula: "CaO", common: "ปูนขาว", chemical: "แคลเซียมออกไซด์" },
+    { id: 17, formula: "NaCl", common: "เกลือแกง", chemical: "โซเดียมคลอไรด์" },
+    { id: 18, formula: "NaHCO<sub>3</sub>", common: "เบกกิ้งโซดา / ผงฟู", chemical: "โซเดียมไฮโดรเจนคาร์บอเนต" },
+    { id: 19, formula: "Na<sub>2</sub>CO<sub>3</sub>", common: "โซดาแอช", chemical: "โซเดียมคาร์บอเนต" },
+    { id: 20, formula: "CaCO<sub>3</sub>", common: "หินปูน", chemical: "แคลเซียมคาร์บอเนต" },
+    { id: 21, formula: "CaSO<sub>4</sub>", common: "ปูนปลาสเตอร์", chemical: "แคลเซียมซัลเฟต" },
+    { id: 22, formula: "KNO<sub>3</sub>", common: "ดินประสิว", chemical: "โพแทสเซียมไนเตรต" },
+    { id: 23, formula: "CuSO<sub>4</sub>", common: "จุนสี", chemical: "คอปเปอร์ซัลเฟต" },
+    { id: 24, formula: "C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>", common: "น้ำตาลกลูโคส", chemical: "กลูโคส" },
+    { id: 25, formula: "C<sub>2</sub>H<sub>5</sub>OH", common: "แอลกอฮอล์", chemical: "เอทานอล" },
+    { id: 26, formula: "CH<sub>3</sub>OH", common: "เมทิลแอลกอฮอล์", chemical: "เมทานอล" },
+    { id: 27, formula: "C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>", common: "น้ำตาลทราย", chemical: "ซูโครส" },
+    { id: 28, formula: "H<sub>2</sub>O<sub>2</sub>", common: "น้ำยาล้างแผล", chemical: "ไฮโดรเจนเปอร์ออกไซด์" },
+    { id: 29, formula: "C<sub>5</sub>H<sub>8</sub>NO<sub>4</sub>Na", common: "ผงชูรส", chemical: "โมโนโซเดียมกลูตาเมต" },
+    { id: 30, formula: "N<sub>2</sub>O", common: "แก๊สหัวเราะ", chemical: "ไนตรัสออกไซด์" }
+  ];
+
+  let deck = [...compounds];
+  let currentIndex = 0;
+  let knownIds = new Set();
+  let reviewIds = new Set();
+  let onlyReview = false;
+
+  function switchMode(mode) {
+    document.getElementById('tab-flash').classList.toggle('active', mode === 'flash');
+    document.getElementById('tab-quiz').classList.toggle('active', mode === 'quiz');
+    document.getElementById('flashcard-section').classList.toggle('hidden', mode !== 'flash');
+    document.getElementById('quiz-section').classList.toggle('hidden', mode !== 'quiz');
+    if (mode === 'quiz') generateQuiz();
+  }
+
+  function flipCard() {
+    document.getElementById('flashcard').classList.toggle('is-flipped');
+  }
+
+  function renderCard() {
+    const cardEl = document.getElementById('flashcard');
+    cardEl.classList.remove('is-flipped');
+
+    if (deck.length === 0) {
+      document.getElementById('card-index').textContent = "เสร็จสิ้น!";
+      document.getElementById('front-label').textContent = "เยี่ยมมาก";
+      document.getElementById('front-content').innerHTML = "ไม่มีการ์ดค้างทบทวน 🎉";
+      return;
+    }
+
+    if (currentIndex >= deck.length) currentIndex = 0;
+    const item = deck[currentIndex];
+    const frontType = document.getElementById('front-type').value;
+
+    const labels = {
+      formula: "สูตรเคมี",
+      common: "ชื่อสามัญ",
+      chemical: "ชื่อทางเคมี"
+    };
+
+    document.getElementById('card-index').textContent = `ข้อที่ ${item.id} (${currentIndex + 1}/${deck.length})`;
+    document.getElementById('front-label').textContent = labels[frontType];
+    document.getElementById('front-content').innerHTML = item[frontType];
+
+    document.getElementById('back-formula').innerHTML = item.formula;
+    document.getElementById('back-common').textContent = item.common;
+    document.getElementById('back-chemical').textContent = item.chemical;
+
+    updateStats();
+  }
+
+  function nextCard() {
+    if (deck.length === 0) return;
+    currentIndex = (currentIndex + 1) % deck.length;
+    renderCard();
+  }
+
+  function prevCard() {
+    if (deck.length === 0) return;
+    currentIndex = (currentIndex - 1 + deck.length) % deck.length;
+    renderCard();
+  }
+
+  function markCard(isKnown) {
+    if (deck.length === 0) return;
+    const item = deck[currentIndex];
+    if (isKnown) {
+      knownIds.add(item.id);
+      reviewIds.delete(item.id);
+    } else {
+      reviewIds.add(item.id);
+      knownIds.delete(item.id);
+    }
+    if (onlyReview) {
+      deck = compounds.filter(c => reviewIds.has(c.id));
+    } else {
+      currentIndex = (currentIndex + 1) % deck.length;
+    }
+    renderCard();
+  }
+
+  function shuffleCards() {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    currentIndex = 0;
+    renderCard();
+  }
+
+  function toggleReviewFilter() {
+    onlyReview = !onlyReview;
+    const btn = document.getElementById('filter-btn');
+    if (onlyReview) {
+      deck = compounds.filter(c => reviewIds.has(c.id));
+      btn.style.background = '#fef3c7';
+      btn.style.borderColor = '#f59e0b';
+    } else {
+      deck = [...compounds];
+      btn.style.background = '#fff';
+      btn.style.borderColor = '#cbd5e1';
+    }
+    currentIndex = 0;
+    renderCard();
+  }
+
+  function resetProgress() {
+    knownIds.clear();
+    reviewIds.clear();
+    onlyReview = false;
+    deck = [...compounds];
+    currentIndex = 0;
+    const btn = document.getElementById('filter-btn');
+    btn.style.background = '#fff';
+    btn.style.borderColor = '#cbd5e1';
+    renderCard();
+  }
+
+  function updateStats() {
+    const pct = Math.round((knownIds.size / compounds.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('stats-text').textContent = `จำได้แล้ว ${knownIds.size} / ${compounds.length} ข้อ (${pct}%)`;
+    document.getElementById('filter-btn').textContent = `📌 เฉพาะที่ยังไม่แม่น (${reviewIds.size})`;
+  }
+
+  let score = 0;
+  let streak = 0;
+
+  function generateQuiz() {
+    const correctItem = compounds[Math.floor(Math.random() * compounds.length)];
+    const askFormula = Math.random() > 0.5;
+
+    const promptLabel = document.getElementById('quiz-prompt-label');
+    const promptEl = document.getElementById('quiz-prompt');
+    const optionsEl = document.getElementById('quiz-options');
+    optionsEl.innerHTML = '';
+
+    let choices = [correctItem];
+    while (choices.length < 4) {
+      const rand = compounds[Math.floor(Math.random() * compounds.length)];
+      if (!choices.some(c => c.id === rand.id)) choices.push(rand);
+    }
+    choices.sort(() => Math.random() - 0.5);
+
+    if (askFormula) {
+      promptLabel.textContent = "สูตรเคมีนี้ตรงกับสารใด?";
+      promptEl.innerHTML = correctItem.formula;
+    } else {
+      promptLabel.textContent = "สารนี้มีสูตรเคมีว่าอย่างไร?";
+      promptEl.innerHTML = `${correctItem.common} <br><small style="font-size:1rem;color:#4f46e5;">(${correctItem.chemical})</small>`;
+    }
+
+    choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = askFormula
+        ? `<strong>${choice.common}</strong> (${choice.chemical})`
+        : choice.formula;
+
+      btn.onclick = () => {
+        const allBtns = optionsEl.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (choice.id === correctItem.id) {
+          btn.classList.add('correct');
+          score += 10;
+          streak++;
+        } else {
+          btn.classList.add('wrong');
+          streak = 0;
+          allBtns.forEach((b, idx) => {
+            if (choices[idx].id === correctItem.id) b.classList.add('correct');
+          });
+        }
+
+        document.getElementById('quiz-score').textContent = `คะแนน: ${score}`;
+        document.getElementById('quiz-streak').textContent = `🔥 คอมโบ: ${streak}`;
+        setTimeout(generateQuiz, 1200);
+      };
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  renderCard();
+</script>
+</body>
+</html>
